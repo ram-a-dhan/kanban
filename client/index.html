@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-signin-client_id" content="417245750214-tuclalcrcarlnemdnl4ntbfs13hbpid6.apps.googleusercontent.com">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Share+Tech&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="style.css">
     <title>Kan-Ban-Zai</title>
   </head>
   <body>
-    <h1 class="text-center my-5">Kan-Ban-Zai</h1>
-
+    
     <!-- REGISTER/LOGIN -->
-    <div class="container regLogWidth text-center flexbox-regLog" id="logDiv">
-      <h2 class="mb-5">Log In</h2>
+    <div id="logDiv" class="container vw-100 vh-100 d-flex flex-column justify-content-around" style="display: block;">
+      <h1 class="text-center my-5">Kan-Ban-Zai</h1>
+    <div class="container regLog text-center flexbox-regLog shadow-border">
+      <h2 class="my-4">Log In</h2>
       <form class="container text-center" id="logForm">
           <div class="form-group">
               <input class="form-control text-center mb-3" type="email" id="logEmail" placeholder="Email">
@@ -26,13 +27,17 @@
           <div class="form-group">
           <input class="form-control btn btn-primary mb-3" type="submit" id="logSubmit" value="Log In">
           <p class="text-center mb-3">Don't have an account?</p>
-          <button class="form-control btn btn-primary mb-3" id="goToRegister">Go to Register</button><br>
+          <button class="form-control btn btn-outline-primary mb-3" id="goToRegister">Go to Register</button><br>
           </div>
       </form>
     </div>
+    <p class="text-center my-5">&copy; 2020 Muhammad Ramadhan</p>
+    </div>
 
-    <div class="container regLogWidth text-center flexbox-regLog" id="regDiv">
-      <h2 class="mb-5">Register</h2>
+  <div id="regDiv" class="container vw-100 vh-100 d-flex flex-column justify-content-around" style="display: block;">
+  <h1 class="text-center my-5">Kan-Ban-Zai</h1>
+    <div class="container regLog text-center flexbox-regLog shadow-border">
+      <h2 class="my-4">Register</h2>
       <form class="container text-center" id="regForm">
           <div class="form-group">
               <input class="form-control text-center mb-3" type="email" id="regEmail" placeholder="Email">
@@ -43,20 +48,52 @@
           <div class="form-group">
           <input class="form-control btn btn-primary mb-3" type="submit" id="regSubmit" value="Register">
           <p class="text-center mb-3">Already have an account?</p>
-          <button class="form-control btn btn-primary mb-3" id="goToLogin">Go to Login</button><br>
+          <button class="form-control btn btn-outline-primary mb-3" id="goToLogin">Go to Login</button><br>
           </div>
       </form>
     </div>
+    <p class="text-center my-5">&copy; 2020 Muhammad Ramadhan</p>
+  </div>
 
     <!-- END REGISTER/LOGIN -->
     
     <!-- MAIN PAGE -->
-    <div class="container" id="mainDiv">
-      
-    </div>
-    <!-- END MAIN PAGE -->
+  <div id="mainDiv" class="container vw-100 vh-100 d-flex flex-column justify-content-between" style="display: block;">
+    <nav class="navbar navbar-light shadow-border">
+      <a class="navbar-brand">Kan-Ban-Zai</a>
+      <form class="form-inline">
+        <button class="btn btn-success m-2 my-sm-0">Add New Task</button>
+        <button class="btn btn-outline-danger m-2 my-sm-0">Log Out</button>
+      </form>
+    </nav>
 
-    <p class="text-center my-5">&copy; 2020 Muhammad Ramadhan</p>
+    <nav id="container-kanban" class="navbar navbar-light shadow-border">
+      <div id="kanban-backlog" class="kanban-group col-3 p-0">
+        <div class="h1">Hello</div>
+
+        <div class="card text-right" style="width: 16rem;">
+          <div class="card-body">
+            <h5 class="card-title text-left">Special title treatment</h5>
+            <p class="card-text text-left">With supporting text below as a natural lead-in to additional content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+
+
+      </div>
+      
+      <div id="kanban-todo" class="kanban-group col-3 p-0">
+
+      </div>
+      <div id="kanban-done" class="kanban-group col-3 p-0">
+
+      </div>
+      <div id="kanban-completed" class="kanban-group col-3 p-0">
+
+      </div>
+    </nav>
+  </div>
+    <!-- END MAIN PAGE -->
 
     <!-- SCRIPTS -->
     <script src="https://apis.google.com/js/platform.js" async defer></script>
