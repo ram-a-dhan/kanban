@@ -1,3 +1,5 @@
+const {OAuth2Client} = require('google-auth-library');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const { User } = require('../models')
 const jwt = require('jsonwebtoken')
 const { comparePassword } = require('../helpers/bcrypt')
@@ -5,6 +7,43 @@ const customError = require('http-errors')
 const secret = process.env.JWT_SECRET || 'hacktiv8'
 
 class UserController {
+    static googleSignIn = (req, res, next) => {
+        let email = null;
+        client.verifyIdToken({
+            idToken: req.body.token,
+            audience: process.env.GOOGLE_CLIENT_ID
+        })
+        .then(ticket => {
+            email = ticket.getPayload().email;
+            let loginData = {
+                email: email
+            }
+            return User.findOne({ where: loginData })
+        })
+        .then(data => {
+            if (data) {
+                return data;
+            } else {
+                return bcrypt.hash(email, saltRounds)
+                .then(hash => {
+                    console.log(hash);
+                    let newUser = {
+                        email: email,
+                        password: hash
+                    };
+                    return User.create(newUser)
+                })
+            }
+        })
+        .then(data => {
+            let token = jwt.sign({ id: data.id }, secret);
+            res.status(200).json({ token });
+        })
+        .catch(err => {
+            next(err);
+        })
+    }
+
     static register = async (req, res, next) => {
         try {
             let newUser = {

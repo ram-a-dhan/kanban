@@ -1,5 +1,14 @@
 * {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Share Tech', monospace;
+}
+
+.btn-sign-in {
+    background: #fff;
+    font: 16px/22px Roboto;
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    display: inline-block;
+    cursor: pointer;
 }
 
 .flexbox-regLog {
@@ -56,7 +65,7 @@
     scrollbar-width: thin;
 }
 
-#kanban-backlog { background-color: #F8BBD0; }
-#kanban-todo { background-color: #FFECB3; }
-#kanban-done { background-color: #B3E5FC; }
-#kanban-completed { background-color: #C8E6C9; }
+#kanban-planning { background-color: #F8BBD0; }
+#kanban-development { background-color: #FFECB3; }
+#kanban-testing { background-color: #B3E5FC; }
+#kanban-production { background-color: #C8E6C9; }
