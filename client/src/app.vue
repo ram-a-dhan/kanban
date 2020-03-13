@@ -18,14 +18,13 @@
 <script>
 import Vue from 'vue'
 // import axios from 'axios'
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 
 import logReg from './components/login-register'
 import mainPage from './components/kanban-page'
 import Swal from 'sweetalert2'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
 
-Vue.use(BootstrapVue)
-Vue.use(IconsPlugin)
 export default {
     components: {
         logReg,

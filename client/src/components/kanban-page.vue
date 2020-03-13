@@ -11,7 +11,7 @@
     <nav id="container-kanban" class="navbar navbar-light shadow-border">
 
       <!-- KANBAN GROUP -->
-      <Group v-for="(cat,i) in categories" :key="i" :cat="cat" :id="cat.id" :list="filtered[cat.name]"></Group>
+      <Group v-for="(cat,i) in categories" :key="i" :cat="cat" :id="cat.id" :list="filtered[cat.name]" @editTaskForm="editTaskForm"></Group>
       <!-- END KANBAN GROUP -->
 
     </nav>
@@ -45,7 +45,7 @@
               <label for="addCategory" class="col-sm-2 col-form-label">Category</label>
               <div class="col-sm-10">
                 <select class="custom-select mr-sm-2" id="addCategory" v-model="addCategory">
-                  <option value="Planning">Planning</option>
+                  <option selected value="Planning">Planning</option>
                   <option value="Development">Development</option>
                   <option value="Testing">Testing</option>
                   <option value="Production">Production</option>
@@ -93,7 +93,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-outline-danger">Delete</button>
+            <button type="button" class="btn btn-outline-danger" @click="deleteTask()">Delete</button>
             <button type="submit" class="btn btn-outline-warning">Update</button>
           </div>
         </form>
@@ -130,14 +130,19 @@ export default {
         addTitle: '',
         addDescription: '',
         addCategory: '',
+        editId: '',
         editTitle: '',
         editDescription: '',
+        editCategory: '',
         list: [],
         // Planning: [],
         // Development: [],
         // Testing: [],
         // Production: []
       }
+    },
+    watch: {
+      
     },
     created() {
       this.showAll()
@@ -188,9 +193,7 @@ export default {
             headers: { token: localStorage.token }
           })
           .then(({data}) => {
-            console.log(data, 'MASUKKK WOEEEEEE')
             this.list = data
-            console.log("LIST DATA", this.list.filter(task => { task.category === 'Planning'}))
             // console.log(this.list)
             // this.filterByCat()
           })
@@ -225,9 +228,98 @@ export default {
             Swal.fire({
                 position: 'top-end',
                 icon: 'error',
-                title: `${err}`,
+                title: `${err.response.data.message}`,
                 showConfirmButton: true,
             })
+          })
+        },
+        editTaskForm(id) {
+          Axios({
+            method: 'GET',
+            url: process.env.VUE_APP_BASE_URL + '/task/' + id,
+            headers: { token: localStorage.token }
+          })
+          .then(({data}) => {
+            this.editId = data.id
+            this.editTitle = data.title
+            this.editDescription = data.description
+            this.editCategory = data.category
+          })
+          .catch(err => {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: `${err.response.data.message}`,
+                showConfirmButton: true
+            })
+          })
+        },
+        editTask() {
+          let editData = {
+            title: this.editTitle,
+            description: this.editDescription,
+            category: this.editCategory
+          }
+          Axios({
+            method: 'PUT',
+            url: process.env.VUE_APP_BASE_URL + '/task/' + this.editId,
+            headers: { token: localStorage.token },
+            data: editData
+          })
+          .then(result => {
+            console.log(result)
+            this.editId = ''
+            this.editTitle = ''
+            this.editDescription = ''
+            this.editCategory = ''
+            this.showAll()
+          })
+          .catch(err => {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: `${err.response.data.message}`,
+                showConfirmButton: true,
+            })
+          })
+        },
+        deleteTask() {
+          Swal.fire({
+            title: 'Delete this task?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+          }).then((result) => {
+            if (result.value) {
+              Axios({
+                method: 'DELETE',
+                url: process.env.VUE_APP_BASE_URL + '/task/' + this.editId,
+                headers: { token: localStorage.token }
+              })
+              .then(deleted => {
+                console.log(deleted)
+                this.editId = ''
+                this.editTitle = ''
+                this.editDescription = ''
+                this.editCategory = ''
+                this.showAll()
+                Swal.fire(
+                  'Deleted!',
+                  'The task has been deleted.',
+                  'success'
+                )
+              })
+              .catch(err => {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: `${err.response.data.message}`,
+                    showConfirmButton: true
+                })
+              })
+            }
           })
         }
     }

@@ -6,7 +6,7 @@
             <p class="card-text text-left">{{task.description}}</p>
 
             <button type="button" class="btn btn-primary">&lt;</button>
-            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#EditTask">
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#EditTask" @click.prevent="editTaskForm(task.id)">
               Edit
             </button>
             <button type="button" class="btn btn-primary">&gt;</button>
@@ -17,6 +17,11 @@
 <script>
 export default {
     name: 'Card',
-    props: ['task']
+    props: ['task'],
+    methods: {
+      editTaskForm(taskId) {
+        this.$emit('editTaskForm', taskId)
+      }
+    }
 }
 </script>
