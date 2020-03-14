@@ -17,7 +17,6 @@
 
 <script>
 import Vue from 'vue'
-// import axios from 'axios'
 
 import logReg from './components/login-register'
 import mainPage from './components/kanban-page'
@@ -47,6 +46,7 @@ export default {
             this.checkLogin()
         },
         logoutSuccess(result) {
+            this.$gAuth.signOut()
             delete localStorage.token
             this.checkLogin()
         }

@@ -22,7 +22,7 @@
 }
 
 .regLog {
-    width: 320px;
+    width: 320px !important;
     display: flex;
     justify-self: center;
     align-self: center;
@@ -65,7 +65,83 @@
     scrollbar-width: thin;
 }
 
-#kanban-planning { background-color: #F8BBD0; }
-#kanban-development { background-color: #FFECB3; }
-#kanban-testing { background-color: #B3E5FC; }
-#kanban-production { background-color: #C8E6C9; }
+#kanban-planning {
+    background-color: #F8BBD0;
+}
+
+#kanban-planning .h1 {
+    box-shadow: 0px 40px 10px #F8BBD0 inset;
+}
+
+#kanban-planning .card {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+#kanban-planning .bottom-shade {
+    height: 30px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: sticky;
+    box-shadow: 0px -20px 10px #F8BBD0 inset;
+}
+#kanban-development {
+    background-color: #FFECB3;
+}
+
+#kanban-development .h1 {
+    box-shadow: 0px 40px 10px #FFECB3 inset;
+}
+
+#kanban-development .card {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+#kanban-development .bottom-shade {
+    height: 30px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: sticky;
+    box-shadow: 0px -20px 10px #FFECB3 inset;
+}
+#kanban-testing {
+    background-color: #B3E5FC;
+}
+
+#kanban-testing .h1 {
+    box-shadow: 0px 40px 10px #B3E5FC inset;
+}
+
+#kanban-testing .card {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+#kanban-testing .bottom-shade {
+    height: 30px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: sticky;
+    box-shadow: 0px -20px 10px #B3E5FC inset;
+}
+#kanban-production {
+    background-color: #C8E6C9;
+}
+
+#kanban-production .h1 {
+    box-shadow: 0px 40px 10px #C8E6C9 inset;
+}
+
+#kanban-production .card {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+#kanban-production .bottom-shade {
+    height: 30px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: sticky;
+    box-shadow: 0px -20px 10px #C8E6C9 inset;
+}

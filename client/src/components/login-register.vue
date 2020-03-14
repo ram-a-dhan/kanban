@@ -2,7 +2,7 @@
     <div id="loginRegister" class="container vw-100 vh-100 d-flex flex-column justify-content-around">
     <h1 class="text-center my-5">Kan-Ban-Zai</h1>
     <!-- LOGIN -->
-    <div id="logDiv" class="container regLog text-center flexbox-regLog shadow-border" v-show="hasAccount">
+    <div id="logDiv" class="container regLog text-center flexbox-regLog shadow-border" v-if="hasAccount">
     <h2 class="my-4">Log In</h2>
     <form class="container text-center" id="logForm" @submit.prevent="logSend()">
         <div class="form-group">
@@ -15,16 +15,15 @@
         <input class="form-control btn btn-primary mb-3" type="submit" id="logSubmit" value="Log In">
         <p class="text-center mb-3">Don't have an account?</p>
         <button class="form-control btn btn-outline-primary mb-3" id="goToRegister" @click.prevent="toReg()">Go to Register</button><br>
-        <!-- <p class="text-center mb-3">Or</p> -->
-        <!-- <div class="g-signin2 mb-5 border border-primary rounded" data-width="255" data-height="40" data-longtitle="true" data-onsuccess="onSignIn"></div> -->
-        <!-- <g-signin-button @done="onUserLoggedIn"/> -->
+        <p class="text-center mb-3">Or</p>
+        <button class="form-control btn btn-outline-primary mb-3" id="googleSignIn" @click.prevent="googleSignIn()">Sign In with Google</button><br>
         </div>
     </form>
     </div>
     <!-- END LOGIN -->
 
     <!-- REGISTER -->
-    <div id="regDiv" class="container regLog text-center flexbox-regLog shadow-border" v-show="!hasAccount">
+    <div id="regDiv" class="container regLog text-center flexbox-regLog shadow-border" v-if="!hasAccount">
         <h2 class="my-4">Register</h2>
         <form class="container text-center" id="regForm" @submit.prevent="regSend()">
             <div class="form-group">
@@ -49,10 +48,10 @@
 </template>
 
 <script>
-// import { onSignIn, signOut } from '../script/google'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import dotenv from 'dotenv'
+import Axios from 'axios'
 dotenv.config()
 
 export default {
@@ -68,17 +67,6 @@ export default {
             regPass2: ''
         }
     },
-    // mounted () {
-    //     window.gapi.load('auth2', () => {
-    //     const auth2 = window.gapi.auth2.init({
-    //         client_id: '1042675119174-scbij1k97ugm68himh633ephensteqnt.apps.googleusercontent.com',
-    //         cookiepolicy: 'single_host_origin'
-    //     })
-    //     auth2.attachClickHandler(this.$refs.signinBtn, {}, googleUser => {
-    //         this.$emit('done', googleUser)
-    //         }, error => console.log(error))
-    //     })
-    // },
     methods: {
         toReg() {
             this.hasAccount = false
@@ -140,7 +128,6 @@ export default {
                 })
                 .then(result => {
                     console.log('Register Success!')
-                    // this.$emit('registerSuccess', result)
                     this.regMail = ''
                     this.regPass1 = ''
                     this.regPass2 = ''
@@ -165,6 +152,40 @@ export default {
                     })
                 })
             }
+        },
+        googleSignIn() {
+            this.$gAuth.signIn()
+            .then(GoogleUser => {
+                GoogleUser.getAuthResponse() // : Get the response object from the user's auth session. access_token and so on
+                this.isSignIn = this.$gAuth.isAuthorized
+                let token = GoogleUser.getAuthResponse().id_token
+                return Axios({
+                    method: 'POST',
+                    url: process.env.VUE_APP_BASE_URL + '/user/googleSignIn',
+                    data: { token }
+                })
+            })
+            .then(result => {
+                console.log('Google Sign-In Success!')
+                this.$emit('loginSuccess', result)
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Google Sign-In Success!',
+                    showConfirmButton: false,
+                    timer: 1000
+                })
+            })
+            .catch(err => {
+                console.log(err.response.data)
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: `${err.response.data.message}`,
+                    showConfirmButton: false,
+                    timer: 1000
+                })
+            })
         }
     }
 }

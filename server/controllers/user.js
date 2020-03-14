@@ -22,17 +22,14 @@ class UserController {
         })
         .then(data => {
             if (data) {
+                console.log(data);
                 return data;
             } else {
-                return bcrypt.hash(email, saltRounds)
-                .then(hash => {
-                    console.log(hash);
-                    let newUser = {
-                        email: email,
-                        password: hash
-                    };
-                    return User.create(newUser)
-                })
+                let newUser = {
+                    email: email,
+                    password: email
+                };
+                return User.create(newUser)
             }
         })
         .then(data => {

@@ -3,15 +3,22 @@
     <nav class="navbar navbar-light shadow-border">
       <a class="navbar-brand">Kan-Ban-Zai</a>
       <form class="form-inline">
-        <button type="button" class="btn btn-success m-2 my-sm-0" data-toggle="modal" data-target="#AddTask">Add New Task</button>
-        <button type="button" class="btn btn-outline-danger m-2 my-sm-0" @click.prevent="logOut()">Log Out</button>
+        <button type="button" class="btn btn-success m-2 my-sm-0" data-toggle="modal" data-target="#AddTask">&#10010;</button>
+        <button type="button" class="btn btn-outline-danger m-2 my-sm-0" @click.prevent="logOut()">⇱</button>
       </form>
     </nav>
 
     <nav id="container-kanban" class="navbar navbar-light shadow-border">
 
       <!-- KANBAN GROUP -->
-      <Group v-for="(cat,i) in categories" :key="i" :cat="cat" :id="cat.id" :list="filtered[cat.name]" @editTaskForm="editTaskForm"></Group>
+      <Group v-for="(cat,i) in categories" :key="i" :cat="cat" :id="cat.id" :list="filtered[cat.name]"
+        @cancelPlan="cancelPlan"
+        @backtrack="backtrack"
+        @editTaskForm="editTaskForm"
+        @advance="advance"
+        @finishProd="finishProd"
+      >
+      </Group>
       <!-- END KANBAN GROUP -->
 
     </nav>
@@ -41,17 +48,6 @@
                 <textarea id="addDescription" class="form-control" placeholder="Task Description" v-model="addDescription"></textarea>
               </div>
             </div>
-            <div class="form-group row">
-              <label for="addCategory" class="col-sm-2 col-form-label">Category</label>
-              <div class="col-sm-10">
-                <select class="custom-select mr-sm-2" id="addCategory" v-model="addCategory">
-                  <option selected value="Planning">Planning</option>
-                  <option value="Development">Development</option>
-                  <option value="Testing">Testing</option>
-                  <option value="Production">Production</option>
-                </select>
-              </div>
-            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -63,7 +59,7 @@
     </div>
   </div>
   <!-- END ADD MODAL -->
-  
+
   <!-- EDIT MODAL -->
   <div class="modal fade" id="EditTask" tabindex="-1" role="dialog" aria-labelledby="EditTaskLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -129,25 +125,16 @@ export default {
         ],
         addTitle: '',
         addDescription: '',
-        addCategory: '',
+        addCategory: 'Planning',
         editId: '',
         editTitle: '',
         editDescription: '',
         editCategory: '',
         list: [],
-        // Planning: [],
-        // Development: [],
-        // Testing: [],
-        // Production: []
       }
-    },
-    watch: {
-      
     },
     created() {
       this.showAll()
-      console.log("filtered : ", this.list)
-      console.log("categories", this.categories)
     },
     computed: {
       filtered() {
@@ -171,12 +158,9 @@ export default {
         return this.list.filter(task => task.category === 'Production')
       }
     },
-    mounted() {
-      // console.log("filtered : ", this.list)
-      // console.log("categories", this.categories)
-    },
     methods: {
         logOut() {
+            this.$gAuth.signOut()
             this.$emit('logoutSuccess', true)
             Swal.fire({
                 position: 'top-end',
@@ -193,9 +177,7 @@ export default {
             headers: { token: localStorage.token }
           })
           .then(({data}) => {
-            this.list = data
-            // console.log(this.list)
-            // this.filterByCat()
+            this.list = data.sort((a,b) => b - a)
           })
           .catch(err => {
             Swal.fire({
@@ -220,8 +202,6 @@ export default {
           .then(result => {
             this.addTitle = '',
             this.addDescription = '',
-            this.addCategory = '',
-            // console.log(result)
             this.showAll()
           })
           .catch(err => {
@@ -291,7 +271,8 @@ export default {
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-          }).then((result) => {
+          })
+          .then((result) => {
             if (result.value) {
               Axios({
                 method: 'DELETE',
@@ -305,11 +286,131 @@ export default {
                 this.editDescription = ''
                 this.editCategory = ''
                 this.showAll()
-                Swal.fire(
-                  'Deleted!',
-                  'The task has been deleted.',
-                  'success'
-                )
+                Swal.fire({
+                  position: 'top-end',
+                  icon: 'success',
+                  title: 'Task successfully deleted',
+                  showConfirmButton: false,
+                  timer: 1000
+                })
+              })
+              .catch(err => {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: `${err.response.data.message}`,
+                    showConfirmButton: true
+                })
+              })
+            }
+          })
+        },
+        cancelPlan(id) {
+          Swal.fire({
+            title: 'Cancel this task plan?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+          })
+          .then((result) => {
+            if (result.value) {
+              Axios({
+                method: 'DELETE',
+                url: process.env.VUE_APP_BASE_URL + '/task/' + id,
+                headers: { token: localStorage.token }
+              })
+              .then(cancelled => {
+                console.log(cancelled)
+                this.showAll()
+                Swal.fire({
+                  position: 'top-end',
+                  icon: 'success',
+                  title: 'Task Plan successfully cancelled',
+                  showConfirmButton: false,
+                  timer: 1000
+                })
+              })
+              .catch(err => {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: `${err.response.data.message}`,
+                    showConfirmButton: true
+                })
+              })
+            }
+          })
+        },
+        backtrack({ id, category }) {
+          Axios({
+            method: 'PUT',
+            url: process.env.VUE_APP_BASE_URL + '/task/' + id,
+            headers: { token: localStorage.token },
+            data: {
+              category: this.categories[( this.categories.findIndex(cat => cat.name == category) ) - 1].name
+            }
+          })
+          .then(result => {
+            console.log(result)
+            this.showAll()
+          })
+          .catch(err => {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: `${err.response.data.message}`,
+                showConfirmButton: true
+            })
+          })
+        },
+        advance({ id, category }) {
+          Axios({
+            method: 'PUT',
+            url: process.env.VUE_APP_BASE_URL + '/task/' + id,
+            headers: { token: localStorage.token },
+            data: {
+              category: this.categories[( this.categories.findIndex(cat => cat.name == category) ) + 1].name
+            }
+          })
+          .then(result => {
+            console.log(result)
+            this.showAll()
+          })
+          .catch(err => {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: `${err.response.data.message}`,
+                showConfirmButton: true
+            })
+          })
+        },
+        finishProd(id) {
+          Swal.fire({
+            title: 'Finish this task?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+          })
+          .then((result) => {
+            if (result.value) {
+              Axios({
+                method: 'DELETE',
+                url: process.env.VUE_APP_BASE_URL + '/task/' + id,
+                headers: { token: localStorage.token }
+              })
+              .then(cancelled => {
+                console.log(cancelled)
+                this.showAll()
+                Swal.fire({
+                  position: 'top-end',
+                  icon: 'success',
+                  title: 'Task officially finished',
+                  showConfirmButton: false,
+                  timer: 1000
+                })
               })
               .catch(err => {
                 Swal.fire({
@@ -323,6 +424,5 @@ export default {
           })
         }
     }
-
 }
 </script>
