@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt')
-const saltRounds = Number(process.env.BCRYPT_SALTROUNDS) || 8
+const saltRounds = Number(process.env.BCRYPT_SALTROUNDS)
 
 module.exports = {
     hashPassword: async (password) => {

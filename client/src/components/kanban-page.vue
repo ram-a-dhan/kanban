@@ -189,6 +189,8 @@ export default {
           })
         },
         addTask() {
+          console.log(process.env.VUE_APP_BASE_URL);
+          
           Axios({
             method: 'POST',
             url: process.env.VUE_APP_BASE_URL + '/task',

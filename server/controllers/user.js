@@ -4,7 +4,7 @@ const { User } = require('../models')
 const jwt = require('jsonwebtoken')
 const { comparePassword } = require('../helpers/bcrypt')
 const customError = require('http-errors')
-const secret = process.env.JWT_SECRET || 'hacktiv8'
+const secret = process.env.JWT_SECRET
 
 class UserController {
     static googleSignIn = (req, res, next) => {

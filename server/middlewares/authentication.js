@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const { User } = require('../models')
-const secret = process.env.JWT_SECRET || 'hacktiv8'
+const secret = process.env.JWT_SECRET
 
 module.exports = {
     authentication: async (req, res, next) => {
